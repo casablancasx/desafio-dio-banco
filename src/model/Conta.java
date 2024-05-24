@@ -1,6 +1,11 @@
 package model;
 
+import exceptions.IdadeInvalidaException;
 import interfaces.IConta;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 public abstract class Conta implements IConta {
 
@@ -67,6 +72,16 @@ public abstract class Conta implements IConta {
     public void transferir(double valor, Conta destino) {
         this.sacar(valor);
         destino.depositar(valor);
+    }
+
+    @Override
+    public void verificarMaiorIdade(LocalDate dataNascimento) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataAtual = LocalDate.now();
+        int idade = Period.between(dataAtual, dataNascimento).getYears();
+        if (idade < 18){
+            throw new IdadeInvalidaException("Você precisa ser maior de idade para criar uma conta");
+        }
     }
 }
 
