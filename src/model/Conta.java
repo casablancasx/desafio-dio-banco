@@ -6,10 +6,11 @@ import interfaces.IConta;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 public abstract class Conta implements IConta {
 
-    private int numero;
+    private String numero;
 
     private String agencia;
 
@@ -17,18 +18,22 @@ public abstract class Conta implements IConta {
 
     private Cliente titular;
 
-    public Conta(int numero, String agencia, double saldo, Cliente titular) {
-        this.numero = numero;
-        this.agencia = agencia;
-        this.saldo = saldo;
-        this.titular = titular;
+    public Conta() {
     }
 
-    public int getNumero() {
+    public Conta(double saldo, Cliente titular) {
+        verificarMaiorIdade(titular.getDataNascimento());
+        gerarConta();
+        gerarAgencia();
+        this.titular = titular;
+        this.saldo = saldo;
+    }
+
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(int numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 
@@ -78,10 +83,47 @@ public abstract class Conta implements IConta {
     public void verificarMaiorIdade(LocalDate dataNascimento) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dataAtual = LocalDate.now();
-        int idade = Period.between(dataAtual, dataNascimento).getYears();
+        int idade = Period.between(dataNascimento, dataAtual).getYears();
         if (idade < 18){
-            throw new IdadeInvalidaException("Você precisa ser maior de idade para criar uma conta");
+            throw new IdadeInvalidaException("Você precisa ter mais de 18 anos");
         }
+    }
+
+    @Override
+    public void gerarAgencia() {
+        Random rd = new Random();
+
+        int numero = rd.nextInt(100000);
+
+        String numeroFormatado = String.format("%05d", numero);
+
+        String agenciaFormatado = numeroFormatado.substring(0,4) + "-" + numeroFormatado.substring(4);
+
+        this.agencia = agenciaFormatado;
+
+    }
+
+    @Override
+    public void gerarConta() {
+
+        Random rd = new Random();
+
+        int numero = rd.nextInt(10000000);
+
+        String numeroFormatado = String.format("%08d", numero);
+
+        this.numero = numeroFormatado;
+
+    }
+
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "numero='" + numero + '\'' +
+                ", agencia='" + agencia + '\'' +
+                ", saldo=" + saldo +
+                ", titular=" + titular +
+                '}';
     }
 }
 

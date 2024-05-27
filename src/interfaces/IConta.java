@@ -13,4 +13,10 @@ public interface IConta {
     public void transferir(double valor, Conta destino);
 
     public void verificarMaiorIdade(LocalDate dataNascimento);
+
+    public void gerarAgencia();
+
+    public void gerarConta();
+
+
 }
